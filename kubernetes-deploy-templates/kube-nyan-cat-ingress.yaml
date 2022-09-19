@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kube-nyan-cat-ingress
+  namespace: kube-nyan-cat
+  annotations:
+    #kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: addon-http-application-routing # Use AKS HTTP Application Routing add-on to publicly expose application
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: kube-nyan-cat.[AKS_DNS_ZONE]
+    http:
+      paths:
+      - backend:
+          service:
+            name: kube-nyan-cat
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

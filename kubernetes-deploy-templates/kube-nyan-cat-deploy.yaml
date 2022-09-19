@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-nyan-cat
+  namespace: kube-nyan-cat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-nyan-cat
+  template:
+    metadata:
+      labels:
+        app: kube-nyan-cat
+    spec:
+      containers:
+      - name: kube-nyan-cat
+        image: guidemetothemoon/kube-nyan-cat:latest
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        livenessProbe:
+            httpGet:
+              path: /
+              port: http
+        readinessProbe:
+            httpGet:
+              path: /
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-nyan-cat
+  namespace: kube-nyan-cat
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: kube-nyan-cat
